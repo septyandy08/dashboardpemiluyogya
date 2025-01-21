@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard WebGIS</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   <!-- Link ke file CSS -->
+   <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gray-100 font-sans">
+     <!-- Navbar -->
+    <nav class="navbar">
+    <div class="logo">Dashboard Perolehan Suara Partai Politik Dapil Provinsi Daerah Istimewa Yogyakarta Pemilu 2024</div>
+    <div class="menu-toggle" onclick="toggleMenu()">&#9776;</div>
+    <ul class="menu">
+        <li><a href="https://septyandy08.github.io/dashboardpemiluyogya/">Home</a></li>
+        <li><a href="https://septyandy08.github.io/mukapetayogya/">See Fullscreen Map</a></li>
+        <li><a href="https://www.linkedin.com/in/muhammad-rizqy-septyandy-983767109/">Contact</a></li>
+    </ul>
+    </nav>
+    <!-- Main Content -->
+    <div class="container mx-auto mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Peta -->
+    <div class="bg-white p-4 shadow rounded">
+      <h2 class="text-lg font-bold mb-4">Peta Interaktif</h2>
+      <iframe src="https://septyandy08.github.io/mukapetayogya/" class="w-full h-80 border rounded" allowfullscreen></iframe>
+    </div>
+
+    <!-- Diagram -->
+    <div class="bg-white p-4 shadow rounded">
+        <h2 class="text-lg font-bold mb-4">Diagram Perolehan Suara Partai Per Kabupaten/Kota</h2>
+        <!-- <canvas id="chart" class="w-full h-80"></canvas> -->
+        <!-- <h2 style="text-align: center;">Total Suara Partai per Kabupaten/Kota</h2> -->
+        <canvas id="stackedBarChart" width="800" height="400"></canvas>
+    </div>
+
+    <script>
+        // Labels untuk sumbu X (Kabupaten/Kota)
+        const labels = ["Kulon Progo", "Bantul", "Gunung Kidul", "Sleman", "Yogyakarta"];
+    
+        // Data suara partai per kabupaten/kota
+        const dataPartai = {
+            "PKB": [38428, 83194, 50873, 63004, 10128],
+            "Gerindra": [40107, 68663, 54277, 78365, 30753],
+            "PDIP": [75917, 147594, 93575, 198271, 78612],
+            "Golkar": [34035, 87335, 100931, 61991, 18553],
+            "NasDem": [10336, 16264, 49887, 42732, 11611],
+            "Partai Buruh": [1272, 3820, 2320, 5296, 2635],
+            "Partai Gelora": [1513, 3261, 3313, 3134, 1511],
+            "PKS": [28663, 87998, 39229, 85077, 31094],
+            "PKN": [238, 1048, 891, 1052, 409],
+            "Hanura": [341, 823, 1493, 937, 453],
+            "Partai Garuda": [530, 1318, 1138, 1328, 478],
+            "PAN": [21152, 39031, 41375, 78590, 18514],
+            "PBB": [270, 1437, 505, 741, 297],
+            "Partai Demokrat": [3057, 13119, 16850, 11145, 5032],
+            "PSI": [7627, 15191, 12313, 22392, 14475],
+            "Partai Perindo": [783, 2180, 2120, 3194, 1957],
+            "PPP": [4098, 14895, 3185, 16809, 8886,],
+            "Partai Ummat": [5811, 18947, 4728, 15365, 10662]
+        };
+    
+        // Warna khusus untuk setiap partai
+        const partaiColors = {
+            "PKB": "darkgreen",
+            "Gerindra": "darkorange",
+            "PDIP": "red",
+            "Golkar": "yellow",
+            "NasDem": "darkblue",
+            "Partai Buruh": "orange",
+            "Partai Gelora": "lightblue",
+            "PKS": "orange",
+            "PKN": "darkred",
+            "Hanura": "lightcoral",
+            "Partai Garuda": "blue",
+            "PAN": "darkblue",
+            "PBB": "green",
+            "Partai Demokrat": "darkblue",
+            "PSI": "red",
+            "Partai Perindo": "blue",
+            "PPP": "green",
+            "Partai Ummat": "black"
+        };
+    
+        // Menyiapkan dataset
+        const datasets = Object.keys(dataPartai).map(partai => ({
+            label: partai,
+            data: dataPartai[partai],
+            backgroundColor: partaiColors[partai],
+            borderColor: partaiColors[partai],
+            borderWidth: 1
+        }));
+    
+        // Membuat grafik
+        const ctx = document.getElementById('stackedBarChart').getContext('2d');
+        const stackedBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                },
+                scales: {
+                    x: {
+                        stacked: true // Mengaktifkan stack pada sumbu X
+                    },
+                    y: {
+                        stacked: true, // Mengaktifkan stack pada sumbu Y
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+  </div>
+
+<!-- Tabel -->
+<div class="container mx-auto mt-6 bg-white p-4 shadow rounded">
+    <h2 class="text-lg font-bold mb-4">Rekapitulasi Perolehan Suara Partai Per Kabupaten/Kota</h2>
+    <div class="overflow-y-auto h-80 border rounded"> <!-- Kontainer dengan scroll -->
+      <table class="table-auto w-full border">
+        <thead class="bg-white-200">
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Kabupaten/Kota</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Kulon Progo</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Bantul</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Gunung Kidul</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Sleman</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Yogyakarta</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Total Suara</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai Kebangkitan Bangsa</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">38428</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">83194</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">50873</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">63004</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">10128</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">245627</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai Gerakan Indonesia Raya</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">40107</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">68663</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">54277</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">78365</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">30753</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">272165</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai Demokrasi Indonesia Perjuangan</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">75917</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">147594</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">93575</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">198271</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">78612</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">593969</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai Golongan Karya</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">34035</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">87335</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">100931</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">61991</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">18553</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">302845</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai NasDem</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">10336</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">16264</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">49887</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">42732</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">11611</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">130830</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai Buruh</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">1272</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">3820</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">2320</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">5296</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">2635</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">15343</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai Gelombang Rakyat Indonesia</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">1513</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">3261</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">3313</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">3134</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">1511</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">12732</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai Keadilan Sejahtera</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">28663</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">87998</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">39229</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">85077</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">31094</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">272061</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai Kebangkitan Nusantara</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">238</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">1048</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">891</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">1052</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">409</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">3638</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai Hati Nurani Rakyat</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">341</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">823</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">1493</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">937</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">453</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">4047</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai Garda Republik Indonesia</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">530</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">1318</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">1138</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">1328</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">478</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">4792</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai Amanat Nasional</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">21152</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">39031</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">41375</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">78590</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">18514</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">198662</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai Bulan Bintang</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">270</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">1437</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">505</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">741</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">297</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">3250</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai Demokrat</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">3057</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">13119</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">16850</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">11145</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">5032</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">49203</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai Solidaritas Indonesia</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">7627</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">15191</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">12313</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">22392</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">14475</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">71998</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai Perindo</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">783</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">2180</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">2120</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">3194</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">1957</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">10234</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai Persatuan Pembangunan</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">4098</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">14895</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">3185</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">16809</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">8886</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">47873</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border border-black-10000 font-bold">Partai Ummat</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">5811</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">18947</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">4728</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">15365</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">10662</td>
+            <td class="px-4 py-2 border border-black-10000 font-bold">55513</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+
+</body>
+</html>
